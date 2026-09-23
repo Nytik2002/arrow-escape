@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Стрелочный побег — логическая головоломка</title>
+
+    <meta name="description"
+          content="Стрелочный побег — спокойная логическая головоломка. Освобождай путь, выбирай правильный порядок и выпускай стрелки с игрового поля.">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f7f5ed;
+            color: #213f36;
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .container {
+            width: min(1120px, calc(100% - 40px));
+            margin: 0 auto;
+        }
+
+        /* HEADER */
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+
+            background: rgba(247, 245, 237, 0.95);
+            backdrop-filter: blur(10px);
+
+            border-bottom: 1px solid #dfe8e2;
+        }
+
+        .header-inner {
+            min-height: 72px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            gap: 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            font-size: 19px;
+            font-weight: 700;
+
+            color: #244f42;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+
+            border-radius: 13px;
+
+            background: #32816a;
+
+            color: white;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            font-size: 24px;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        nav a {
+            font-size: 14px;
+            font-weight: 600;
+
+            color: #4d6d63;
+
+            transition: 0.2s;
+        }
+
+        nav a:hover {
+            color: #32816a;
+        }
+
+        /* HERO */
+
+        .hero {
+            padding: 80px 0 90px;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1.05fr 0.95fr;
+
+            align-items: center;
+
+            gap: 70px;
+        }
+
+        .tag {
+            display: inline-block;
+
+            padding: 8px 15px;
+
+            border-radius: 999px;
+
+            background: #e0eee5;
+
+            color: #32816a;
+
+            font-size: 12px;
+            font-weight: 700;
+
+            letter-spacing: 1.2px;
+        }
+
+        .hero h1 {
+            margin-top: 22px;
+
+            font-size: clamp(54px, 7vw, 88px);
+
+            line-height: 0.98;
+
+            color: #234a3e;
+
+            letter-spacing: -3px;
+        }
+
+        .hero-text {
+            margin-top: 25px;
+
+            max-width: 610px;
+
+            font-size: 19px;
+
+            color: #647a72;
+        }
+
+        .hero-buttons {
+            margin-top: 32px;
+
+            display: flex;
+            flex-wrap: wrap;
+
+            gap: 12px;
+        }
+
+        .button {
+            min-height: 52px;
+
+            padding: 0 22px;
+
+            border-radius: 14px;
+
+            display: inline-flex;
+
+            align-items: center;
+            justify-content: center;
+
+            font-weight: 700;
+
+            transition: 0.2s;
+        }
+
+        .button-main {
+            background: #32816a;
+            color: white;
+
+            box-shadow: 0 12px 28px rgba(50, 129, 106, 0.25);
+        }
+
+        .button-main:hover {
+            transform: translateY(-2px);
+        }
+
+        .button-light {
+            background: white;
+
+            color: #2b6553;
+
+            border: 1px solid #dbe6e0;
+        }
+
+        /* PHONE */
+
+        .phone-area {
+            position: relative;
+
+            display: flex;
+            justify-content: center;
+        }
+
+        .phone {
+            width: 330px;
+
+            background: white;
+
+            border-radius: 35px;
+
+            padding: 13px;
+
+            box-shadow: 0 30px 70px rgba(42, 78, 67, 0.18);
+
+            transform: rotate(2deg);
+        }
+
+        .phone img {
+            width: 100%;
+
+            display: block;
+
+            border-radius: 25px;
+        }
+
+        .small-card {
+            position: absolute;
+
+            padding: 12px 16px;
+
+            background: white;
+
+            border-radius: 14px;
+
+            box-shadow: 0 12px 30px rgba(42, 78, 67, 0.15);
+
+            font-size: 13px;
+            font-weight: 700;
+
+            color: #356c5a;
+        }
+
+        .card-one {
+            top: 70px;
+            right: -10px;
+        }
+
+        .card-two {
+            bottom: 65px;
+            left: 0;
+        }
+
+        /* SECTIONS */
+
+        section {
+            padding: 85px 0;
+        }
+
+        .section-small {
+            color: #32816a;
+
+            text-transform: uppercase;
+
+            letter-spacing: 1.5px;
+
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .section-title {
+            margin-top: 10px;
+
+            max-width: 750px;
+
+            font-size: clamp(36px, 5vw, 54px);
+
+            line-height: 1.05;
+
+            color: #234a3e;
+
+            letter-spacing: -1.5px;
+        }
+
+        .section-description {
+            margin-top: 18px;
+
+            max-width: 750px;
+
+            color: #72827c;
+
+            font-size: 18px;
+        }
+
+        /* HOW TO PLAY */
+
+        .steps {
+            margin-top: 45px;
+
+            display: grid;
+
+            grid-template-columns: repeat(3, 1fr);
+
+            gap: 20px;
+        }
+
+        .step {
+            background: white;
+
+            padding: 30px;
+
+            border-radius: 24px;
+
+            border: 1px solid #e3ebe7;
+
+            box-shadow: 0 12px 30px rgba(42, 78, 67, 0.05);
+        }
+
+        .step-number {
+            width: 48px;
+            height: 48px;
+
+            border-radius: 14px;
+
+            background: #e1efe6;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            font-size: 17px;
+            font-weight: 700;
+
+            color: #32816a;
+        }
+
+        .step h3 {
+            margin-top: 20px;
+
+            font-size: 21px;
+
+            color: #284d42;
+        }
+
+        .step p {
+            margin-top: 10px;
+
+            color: #73847d;
+        }
+
+        /* FEATURES */
+
+        .features-box {
+            padding: 55px;
+
+            border-radius: 35px;
+
+            background: #244f42;
+
+            color: white;
+
+            display: grid;
+
+            grid-template-columns: 1fr 1fr;
+
+            gap: 50px;
+
+            align-items: center;
+        }
+
+        .features-box h2 {
+            font-size: 46px;
+
+            line-height: 1.08;
+        }
+
+        .features-box p {
+            margin-top: 18px;
+
+            color: #c5d8d0;
+        }
+
+        .features-grid {
+            display: grid;
+
+            grid-template-columns: 1fr 1fr;
+
+            gap: 13px;
+        }
+
+        .feature {
+            padding: 16px;
+
+            border-radius: 15px;
+
+            background: rgba(255, 255, 255, 0.08);
+
+            border: 1px solid rgba(255, 255, 255, 0.08);
+
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* SCREENSHOTS */
+
+        .screenshots {
+            margin-top: 45px;
+
+            display: grid;
+
+            grid-template-columns: 1fr 1fr;
+
+            gap: 25px;
+        }
+
+        .screenshot-card {
+            background: white;
+
+            padding: 25px;
+
+            border-radius: 28px;
+
+            border: 1px solid #e0e9e4;
+
+            box-shadow: 0 15px 40px rgba(42, 78, 67, 0.08);
+        }
+
+        .screenshot-card img {
+            max-height: 650px;
+            max-width: 100%;
+
+            margin: 0 auto;
+
+            display: block;
+
+            border-radius: 20px;
+        }
+
+        .screenshot-card h3 {
+            margin-top: 20px;
+
+            font-size: 20px;
+        }
+
+        .screenshot-card p {
+            margin-top: 5px;
+
+            color: #73847d;
+        }
+
+        /* SUPPORT */
+
+        .support {
+            padding: 40px;
+
+            border-radius: 30px;
+
+            background: #e2efe7;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 30px;
+        }
+
+        .support h2 {
+            color: #244f42;
+
+            font-size: 32px;
+        }
+
+        .support p {
+            margin-top: 8px;
+
+            color: #657a72;
+        }
+
+        /* FOOTER */
+
+        footer {
+            margin-top: 40px;
+
+            padding: 35px 0;
+
+            border-top: 1px solid #dde7e2;
+
+            color: #7b8984;
+
+            font-size: 14px;
+        }
+
+        .footer-inner {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            gap: 20px;
+        }
+
+        .footer-links {
+            display: flex;
+
+            gap: 20px;
+        }
+
+        .footer-links a {
+            font-weight: 600;
+
+            color: #3b6658;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 850px) {
+
+            nav a:not(.privacy) {
+                display: none;
+            }
+
+            .hero-grid {
+                grid-template-columns: 1fr;
+
+                gap: 55px;
+            }
+
+            .phone {
+                width: 300px;
+            }
+
+            .steps {
+                grid-template-columns: 1fr;
+            }
+
+            .features-box {
+                grid-template-columns: 1fr;
+
+                padding: 35px 25px;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .screenshots {
+                grid-template-columns: 1fr;
+            }
+
+            .support {
+                flex-direction: column;
+
+                align-items: flex-start;
+            }
+
+            .footer-inner {
+                flex-direction: column;
+
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 500px) {
+
+            .container {
+                width: calc(100% - 24px);
+            }
+
+            .hero {
+                padding-top: 55px;
+            }
+
+            .hero h1 {
+                font-size: 54px;
+            }
+
+            .hero-text {
+                font-size: 17px;
+            }
+
+            .phone {
+                width: 270px;
+            }
+
+            .small-card {
+                font-size: 11px;
+            }
+
+            .card-one {
+                right: 0;
+            }
+
+            .card-two {
+                left: 0;
+            }
+
+            section {
+                padding: 65px 0;
+            }
+
+            .features-box h2 {
+                font-size: 36px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+
+    <div class="container header-inner">
+
+        <a class="logo" href="#top">
+
+            <div class="logo-icon">
+                ➜
+            </div>
+
+            Стрелочный побег
+
+        </a>
+
+        <nav>
+
+            <a href="#about">
+                Об игре
+            </a>
+
+            <a href="#how">
+                Как играть
+            </a>
+
+            <a href="#screens">
+                Скриншоты
+            </a>
+
+            <a class="privacy" href="privacy.html">
+                Конфиденциальность
+            </a>
+
+        </nav>
+
+    </div>
+
+</header>
+
+
+<main id="top">
+
+    <!-- HERO -->
+
+    <section class="hero">
+
+        <div class="container hero-grid">
+
+            <div>
+
+                <div class="tag">
+                    ЛОГИКА · СПОКОЙСТВИЕ · СВОБОДА
+                </div>
+
+                <h1>
+                    Стрелочный<br>
+                    побег
+                </h1>
+
+                <p class="hero-text">
+
+                    Освободи путь каждой стрелке.
+
+                    Наблюдай за игровым полем,
+                    находи правильную последовательность
+                    и выпускай стрелки одну за другой.
+
+                </p>
+
+                <div class="hero-buttons">
+
+                    <a class="button button-main" href="#how">
+                        Как играть →
+                    </a>
+
+                    <a class="button button-light" href="#screens">
+                        Посмотреть игру
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <div class="phone-area">
+
+                <div class="phone">
+
+                    <img
+                            src="images/main.png"
+                            alt="Главный экран игры Стрелочный побег"
+                    >
+
+                </div>
+
+                <div class="small-card card-one">
+                    🧩 Логическая головоломка
+                </div>
+
+                <div class="small-card card-two">
+                    🌿 Играй без спешки
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ABOUT -->
+
+    <section id="about">
+
+        <div class="container">
+
+            <div class="section-small">
+                ОБ ИГРЕ
+            </div>
+
+            <h2 class="section-title">
+                Простой принцип.
+                Всё сложнее решения.
+            </h2>
+
+            <p class="section-description">
+
+                «Стрелочный побег» — спокойная логическая игра,
+                в которой каждая стрелка хочет покинуть поле.
+
+                Но уйти она сможет только тогда,
+                когда её путь действительно свободен.
+
+            </p>
+
+
+            <div class="steps">
+
+                <div class="step">
+
+                    <div class="step-number">
+                        01
+                    </div>
+
+                    <h3>
+                        Посмотри на поле
+                    </h3>
+
+                    <p>
+
+                        Определи направление стрелок
+                        и найди те, которым ничего
+                        не мешает двигаться.
+
+                    </p>
+
+                </div>
+
+
+                <div class="step">
+
+                    <div class="step-number">
+                        02
+                    </div>
+
+                    <h3>
+                        Выбери правильный порядок
+                    </h3>
+
+                    <p>
+
+                        Один ход может освободить путь
+                        сразу нескольким другим стрелкам.
+
+                    </p>
+
+                </div>
+
+
+                <div class="step">
+
+                    <div class="step-number">
+                        03
+                    </div>
+
+                    <h3>
+                        Освободи всё поле
+                    </h3>
+
+                    <p>
+
+                        Выпусти все стрелки
+                        и переходи к следующей
+                        головоломке.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- FEATURES -->
+
+    <section id="how">
+
+        <div class="container">
+
+            <div class="features-box">
+
+                <div>
+
+                    <div class="section-small"
+                         style="color:#9bcbbb;">
+
+                        ИГРОВОЙ ПРОЦЕСС
+
+                    </div>
+
+                    <h2>
+
+                        Дыши.<br>
+                        Смотри.<br>
+                        Выбирай ход.
+
+                    </h2>
+
+                    <p>
+
+                        Здесь не нужно торопиться.
+
+                        Изучай расположение стрелок,
+                        продумывай последовательность
+                        и постепенно очищай игровое поле.
+
+                    </p>
+
+                </div>
+
+
+                <div class="features-grid">
+
+                    <div class="feature">
+                        ✓ Простые правила
+                    </div>
+
+                    <div class="feature">
+                        ✓ Короткие уровни
+                    </div>
+
+                    <div class="feature">
+                        ✓ Подсказки
+                    </div>
+
+                    <div class="feature">
+                        ✓ Спокойный темп
+                    </div>
+
+                    <div class="feature">
+                        ✓ Разные миры
+                    </div>
+
+                    <div class="feature">
+                        ✓ Постепенное усложнение
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- SCREENSHOTS -->
+
+    <section id="screens">
+
+        <div class="container">
+
+            <div class="section-small">
+                СКРИНШОТЫ
+            </div>
+
+            <h2 class="section-title">
+                Спокойный дизайн без лишнего шума.
+            </h2>
+
+            <p class="section-description">
+
+                Светлое оформление,
+                мягкие цвета и минималистичный интерфейс
+                помогают сосредоточиться на самой головоломке.
+
+            </p>
+
+
+            <div class="screenshots">
+
+                <div class="screenshot-card">
+
+                    <img
+                            src="images/main.png"
+                            alt="Главное меню Стрелочного побега"
+                    >
+
+                    <h3>
+                        Главное меню
+                    </h3>
+
+                    <p>
+
+                        Продолжай игру,
+                        выбирай мир и возвращайся
+                        к последнему открытому уровню.
+
+                    </p>
+
+                </div>
+
+
+                <div class="screenshot-card">
+
+                    <img
+                            src="images/game.png"
+                            alt="Игровой уровень Стрелочного побега"
+                    >
+
+                    <h3>
+                        Игровое поле
+                    </h3>
+
+                    <p>
+
+                        Найди свободную стрелку,
+                        освободи её путь
+                        и постепенно очисти всё поле.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- SUPPORT -->
+
+    <section>
+
+        <div class="container">
+
+            <div class="support">
+
+                <div>
+
+                    <h2>
+                        Поддержка
+                    </h2>
+
+                    <p>
+
+                        Возник вопрос по игре
+                        или обнаружилась ошибка?
+
+                        Напишите разработчику.
+
+                    </p>
+
+                </div>
+
+
+                <a
+                        class="button button-main"
+                        href="mailto:Shaxhbanov@gmail.com">
+
+                    Shaxhbanov@gmail.com
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+
+<footer>
+
+    <div class="container footer-inner">
+
+        <div>
+
+            © 2026 Стрелочный побег.
+            Все права защищены.
+
+        </div>
+
+
+        <div class="footer-links">
+
+            <a href="privacy.html">
+
+                Политика конфиденциальности
+
+            </a>
+
+            <a href="mailto:Shaxhbanov@gmail.com">
+
+                Связаться с разработчиком
+
+            </a>
+
+        </div>
+
+    </div>
+
+</footer>
+
+
+</body>
+</html>
